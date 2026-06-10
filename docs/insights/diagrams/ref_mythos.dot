@@ -1,0 +1,36 @@
+
+digraph mythos {
+  rankdir=TB; bgcolor="white"; compound=true;
+  graph [fontname="WenQuanYi Micro Hei", fontsize=20, labelloc="t",
+         label="参考架构 2：Claude Mythos / Project Glasswing 实践架构",
+         nodesep=0.4, ranksep=0.45];
+  node [fontname="WenQuanYi Micro Hei", fontsize=13.5, shape=box, style="rounded,filled",
+        fillcolor="#EAF1F8", color="#2E74B5", penwidth=1.7, margin="0.20,0.11"];
+  edge [fontname="WenQuanYi Micro Hei", fontsize=11, color="#5B7088", penwidth=1.7, arrowsize=0.85];
+
+  subgraph cluster_agentic {
+    label="自主扫描 harness（agentic 工具）"; fontsize=15; color="#2C8C99"; style="rounded"; bgcolor="#F2F8F7";
+    harness  [label="代码库 Harness：映射代码库", fillcolor="#E7F0EF", color="#2C8C99"];
+    tmb      [label="威胁模型构建器\n按可利用概率给文件排序，优先攻击面"];
+    subagents[label="扫描子 agent（并行）\n高风险区域优先，减少重复"];
+    discover [label="自主发现 + 构造可工作 PoC\n（如 wolfSSL 证书伪造）"];
+  }
+
+  sev    [label="AI 初评严重性\nhigh / critical / medium / low", fillcolor="#FFF3DE", color="#E08A00"];
+  triage [label="triage 归并 + 自动撰写报告", fillcolor="#FFF3DE", color="#E08A00"];
+  human  [label="人工复现并重评严重性\n独立安全机构 / Anthropic · 真阳率 ~90.6%", fillcolor="#FFF3DE", color="#E08A00", penwidth=2];
+  disclose [label="向维护者出具报告 → 90 天协调披露\n→ 补丁部署 → 分配 CVE", fillcolor="#E7F0EF", color="#2E8B57"];
+
+  harness -> tmb -> subagents -> discover;
+  discover -> sev -> triage -> human -> disclose;
+
+  safeguard [label="安全保障（防滥用）\n· Mythos 级模型不公开发布\n· 仅限通过审核的伙伴/客户访问\n· 网络安全验证计划核验合法用途\n· 技术细节延迟披露至补丁部署",
+             shape=note, fillcolor="#F6E9E9", color="#B03A2E", fontsize=11.5];
+  skills    [label="配套技能（开源参考 harness）\n威胁建模 · 扫描 · triage · 补丁",
+             shape=note, fillcolor="#EFEAF6", color="#5B4B8A", fontsize=11.5];
+
+  {rank=same; discover; safeguard;}
+  {rank=same; subagents; skills;}
+  safeguard -> human [style=invis];
+  skills -> subagents [style=invis];
+}

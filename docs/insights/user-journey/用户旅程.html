@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 漏洞挖掘与修复：基于 v2.0 架构的横向流程活动泳道图</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #2c3e50;
+            --border-color: #e2e8f0;
+            
+            /* 人工参与高亮色（琥珀金） */
+            --human-bg: #fffbeb;
+            --human-border: #d97706;
+            --human-text: #92400e;
+            
+            /* 自动化静默色（冷灰） */
+            --auto-bg: #f1f5f9;
+            --auto-border: #94a3b8;
+            --auto-text: #475569;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 30px;
+            margin: 0;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e293b;
+            margin-bottom: 5px;
+            font-size: 26px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        /* 转置后的网格布局：1列角色头 + 9个等宽流程活动列 */
+        .swimlane-container {
+            display: grid;
+            grid-template-columns: 180px repeat(9, minmax(200px, 1fr));
+            gap: 12px;
+            max-width: 2200px;
+            margin: 0 auto;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+
+        /* 顶部流程活动表头样式 */
+        .activity-header {
+            background-color: #1e293b;
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .activity-header span {
+            font-weight: normal;
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+        .activity-header .time-tag {
+            background-color: #334155;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-top: 6px;
+            color: #cbd5e1;
+        }
+
+        /* 左侧角色行头样式 */
+        .role-header {
+            background-color: #334155;
+            color: white;
+            padding: 20px 15px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* 空白占位块（左上角第一块） */
+        .empty-header {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+
+        /* 卡片通用样式 */
+        .card {
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 12.5px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* 🔴 人工参与卡片高亮样式 */
+        .card-human {
+            background-color: var(--human-bg);
+            border-left: 5px solid var(--human-border);
+            border-top: 1px solid #fde68a;
+            border-right: 1px solid #fde68a;
+            border-bottom: 1px solid #fde68a;
+        }
+        .card-human:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(217, 93, 6, 0.12);
+        }
+
+        /* ⚪ 自动化静默卡片样式 */
+        .card-auto {
+            background-color: var(--auto-bg);
+            border-left: 5px solid var(--auto-border);
+            opacity: 0.85;
+        }
+
+        /* 标签/徽章样式 */
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .badge-human { 
+            background-color: #fef3c7; 
+            color: var(--human-text);
+            border: 1px solid #fcd34d;
+        }
+        .badge-auto { 
+            background-color: #e2e8f0; 
+            color: var(--auto-text); 
+        }
+
+        /* 列表文字调整 */
+        ul {
+            margin: 0;
+            padding-left: 15px;
+        }
+        .card-human ul { color: #451a03; }
+        .card-auto ul { color: #334155; }
+        li { margin-bottom: 6px; }
+        li b { font-weight: 700; }
+
+        /* 响应式支持 */
+        @media (max-width: 1400px) {
+            .swimlane-container {
+                display: block;
+            }
+            .empty-header, .activity-header {
+                display: none;
+            }
+            .role-header {
+                background-color: #1e293b;
+                padding: 10px;
+                margin-top: 25px;
+                border-radius: 6px 6px 0 0;
+            }
+            .card {
+                margin-bottom: 10px;
+                border-radius: 0;
+            }
+            .card:last-child {
+                border-radius: 0 0 6px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h2>📊 AI 漏洞挖掘与修复：横向流程活动泳道图 (基于架构 v2.0 完善版)</h2>
+    <div class="subtitle">💡 提示：基于 2026/6/7 版内部规范更新，<span style="color:var(--human-border); font-weight:bold; background:#fef3c7; padding:2px 6px; border-radius:4px;">黄色高亮区域</span> 代表根据 CVSS 门控机制引入的必须/按需人工环节</div>
+
+    <div class="swimlane-container">
+        
+        <div class="role-header empty-header"></div>
+        <div class="activity-header">1. 代码接入与预处理<span>① 接入层驱动</span><span class="time-tag">&lt; 5 分钟</span></div>
+        <div class="activity-header">2. 静态分析扫描<span>② 分析引擎层启动</span><span class="time-tag">10～30 分钟</span></div>
+        <div class="activity-header">3. Agent 协作分析<span>③ Agent 编排层协同</span><span class="time-tag">15～60 分钟</span></div>
+        <div class="activity-header">4. 沙箱验证<span>④ 漏洞验证层动态运行</span><span class="time-tag">5～15 分钟</span></div>
+        <div class="activity-header">5. 补丁生成<span>⑤ 自动修复引擎生成</span><span class="time-tag">10～20 分钟</span></div>
+        <div class="activity-header">6. 修复验证<span>⑥ 三重验证闭环运行</span><span class="time-tag">15～45 分钟</span></div>
+        <div class="activity-header">7. 人工审核 (高危门控)<span>⑤ 架构高危强制截流</span><span class="time-tag">≤ 24 小时</span></div>
+        <div class="activity-header">8. PR 合并<span>⑧ 研发消费端落地</span><span class="time-tag">根据 SLA 响应</span></div>
+        <div class="activity-header">9. 修复确认扫描<span>①&② 最终因果闭环</span><span class="time-tag">同首次扫描</span></div>
+
+        <div class="role-header">🙋‍♂️ 用户角色<br>(安全团队/研发团队)</div>
+        
+        <div class="card card-human">
+            <span class="badge badge-human">🙋‍♂️ 研发触发/安全专项</span>
+            <ul>
+                <li><b>【触发行为】</b>执行日常 Git Push [cite: 22, 44]、创建/更新 Merge Request [cite: 44]。</li>
+                <li><b>【安全审计】</b>安全团队可按需通过 API 手动提交执行专项审计任务 [cite: 22, 44]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⏳ 离线静默</span>
+            <ul>
+                <li><b>【无摩擦体验】</b>无需研发团队干预，不改变日常工作流程 [cite: 42]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⏳ 离线静默</span>
+            <ul>
+                <li>后台 Agent 多机协作中，安全和研发团队保持离线静默 [cite: 22]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⏳ 动态等待</span>
+            <ul>
+                <li>系统在此阶段排除“幻觉”误报 [cite: 108]，人类无需介入复核 [cite: 23]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⏳ 方案等待</span>
+            <ul>
+                <li>LLM 后台自动生成并排序修复 diff 候选补丁 [cite: 22, 31]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⏳ 回归等待</span>
+            <ul>
+                <li>等待系统自动化运行原 PoC 变体与单元测试套件 [cite: 74, 75]。</li>
+            </ul>
+        </div>
+        <div class="card card-human">
+            <span class="badge badge-human">🙋‍♂️ 关键人工活动</span>
+            <ul>
+                <li><b>【多级门控】</b><b>CVSS 7.0-10.0（高危/严重）</b>缺陷生成草稿，<b>强力截流</b> 。</li>
+                <li><b>【协同联审】</b><b>强制触发安全团队 + 研发 Lead 双重人工审核机制</b> 。</li>
+            </ul>
+        </div>
+        <div class="card card-human">
+            <span class="badge badge-human">🙋‍♂️ 关键人工活动</span>
+            <ul>
+                <li><b>【消费漏洞】</b><b>研发 Lead/团队</b> 在 IDE 插件或 Web 看板查看验证报告与 Diff 对比 [cite: 22, 33]。</li>
+                <li><b>【合并决策】</b>中危以上（CVSS &ge; 4.0）手动一键合并 PR ；低危自动合并无需人工 。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⏳ 验证闭环</span>
+            <ul>
+                <li>PR 合并后，等待平台最终判定漏洞根因是否被彻底消除 [cite: 38]。</li>
+            </ul>
+        </div>
+
+
+        <div class="role-header">💻 AI 平台系统<br>(前端/看板/接口)</div>
+        
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 接入层响应</span>
+            <ul>
+                <li>通过 <b>Git Hook / CI/CD 插件</b> 捕获代码变更并验证托管授权 [cite: 22, 44]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 实时推流</span>
+            <ul>
+                <li>Web 看板利用 WebSocket 实时渲染静态扫描状态和初筛缺陷列表 [cite: 23]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 编排看板</span>
+            <ul>
+                <li>提供 Agent 推理协同看板，结构化记录分析日志 [cite: 23]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 验证详情</span>
+            <ul>
+                <li>平台结构化承载并展示 PoC 脚本、数据流路径与危害说明 [cite: 23]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 补丁对比</span>
+            <ul>
+                <li>界面呈现多候选 diff 补丁，并附置信度、侵入性排序标识 [cite: 22, 69]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 报告生成</span>
+            <ul>
+                <li>呈现三重验证数据（原 PoC 重跑结果、性能基准变动和二次 SAST 扫描） [cite: 73]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 阻断门控</span>
+            <ul>
+                <li>针对高危缺陷<b>下发人工审核工单</b>，冻结 PR 自动合入权限，强制等待审批 。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 通知消费</span>
+            <ul>
+                <li>将验证通过的补丁自动封装为 PR，通过 <b>Jira / Slack / 邮件</b> 推送给对应团队 [cite: 22, 33]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 状态流转</span>
+            <ul>
+                <li>跟踪漏洞状态机（图3），重扫通过后正式将状态流转为终态<b>【已关闭】</b> [cite: 81, 82]。</li>
+            </ul>
+        </div>
+
+
+        <div class="role-header">🤖 AI 核心大脑<br>(分析引擎/多Agent/流水线)</div>
+        
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 代码预处理</span>
+            <ul>
+                <li>拉取代码，<b>自动构建 AST（抽象语法树）并提取跨文件函数调用图 (Call Graph)</b> [cite: 47, 48]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 混合双引擎</span>
+            <ul>
+                <li>运行 <b>CodeQL</b> 做语义级污点追踪，并发运行 <b>Semgrep</b> 进行规则级匹配 [cite: 54]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 多 Agent 协同</span>
+            <ul>
+                <li><b>Planner Agent</b> 调度：<b>Researcher</b> 查历史 CVE [cite: 59] &rarr; <b>Analyst</b> 评估可达路径与根因 [cite: 59] &rarr; <b>Exploiter</b> 构造可复现的最小 PoC 代码 [cite: 17, 59]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 沙箱隔离执行</span>
+            <ul>
+                <li>在 <b>Docker + gVisor 完全隔离沙箱</b> 中动态运行 PoC 触发 crash，并计算 CVSS 评分 [cite: 22, 66]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ Patcher 驱动</span>
+            <ul>
+                <li>由 <b>Patcher Agent</b> 调用 LLM（云端 Claude / 私有部署 Qwen/DeepSeek-Coder）多方案生成 diff 补丁 [cite: 59, 89]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 三重验证闭环</span>
+            <ul>
+                <li><b>1. 回归：</b>重跑原 PoC 变体 [cite: 74]；<b>2. 副作用：</b>跑单测，性能劣化 &le; 5% [cite: 75]；<b>3. 二次扫描：</b>防引入新 CWE [cite: 76]。</li>
+                <li><b>【回路设计】</b>若验证失败<b>支持最多 3 次自动重试</b>；超限则升级为人工处理 [cite: 36, 37]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 守候响应</span>
+            <ul>
+                <li>挂起当前自动化流程，保持对人工审核判定结果（通过/驳回）的监听 [cite: 23, 71]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 自动提交</span>
+            <ul>
+                <li>低危缺陷根据策略自动提交并合入主干 ；中高危在收到人类 Approve 指令后<b>自动执行 PR 合并</b> [cite: 22, 34]。</li>
+            </ul>
+        </div>
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 终审重扫</span>
+            <ul>
+                <li>代码合并后自动触发全量扫描，检测补丁修复因果链，确保全产品线安全基线稳固 [cite: 13, 38]。</li>
+            </ul>
+        </div>
+
+    </div>
+
+</body>
+</html> 

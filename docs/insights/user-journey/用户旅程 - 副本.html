@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 漏洞挖掘平台架构优化：流程活动泳道图</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #2c3e50;
+            --border-color: #cbd5e1;
+            
+            /* 人工参与高亮色 */
+            --human-bg: #fffbeb;
+            --human-border: #d97706;
+            --human-text: #92400e;
+            
+            /* 自动化静默色 */
+            --auto-bg: #f8fafc;
+            --auto-border: #94a3b8;
+            --auto-text: #334155;
+
+            /* AI挖掘引擎 整体浅底色框 */
+            --engine-box-bg: #f0fdf4;
+            --engine-box-border: #4caf50;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 30px;
+            margin: 0;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e293b;
+            margin-bottom: 5px;
+            font-size: 26px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        /* 1列角色头 + 5个核心活动大阶段 */
+        .swimlane-container {
+            display: grid;
+            grid-template-columns: 200px repeat(5, 1fr);
+            gap: 15px;
+            max-width: 1650px;
+            margin: 0 auto;
+        }
+
+        /* 顶部属性表头 */
+        .activity-header {
+            background-color: #1e293b;
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .activity-header span {
+            font-weight: normal;
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        /* 左侧角色行头 */
+        .role-header {
+            background-color: #334155;
+            color: white;
+            padding: 20px 15px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .empty-header { background: transparent; border: none; }
+
+        /* 卡片通用 */
+        .card {
+            padding: 18px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 13px;
+            position: relative;
+            z-index: 2;
+            background: white;
+        }
+
+        /* 🔴 人工参与高亮 */
+        .card-human {
+            background-color: var(--human-bg) !important;
+            border-left: 5px solid var(--human-border);
+            border-top: 1px solid #fde68a;
+            border-right: 1px solid #fde68a;
+            border-bottom: 1px solid #fde68a;
+        }
+        .card-human ul { color: #451a03; }
+
+        /* ⚪ 自动化 */
+        .card-auto {
+            background-color: var(--auto-bg);
+            border-left: 5px solid var(--auto-border);
+        }
+        .card-auto ul { color: #334155; }
+
+        /* 🟢 AI挖掘引擎：跨列包裹底色框样式 */
+        .engine-container-box {
+            grid-column: 3 / span 3; /* 横跨“智能漏洞挖掘、自动化PoC验证、补丁生成与修复”三个阶段 */
+            background-color: var(--engine-box-bg);
+            border: 2px dashed var(--engine-box-border);
+            border-radius: 8px;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            position: relative;
+        }
+
+        /* AI挖掘引擎的整体标签 */
+        .engine-box-label {
+            position: absolute;
+            top: -12px;
+            left: 15px;
+            background-color: #4caf50;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+            z-index: 3;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        .badge-human { background-color: #fef3c7; color: var(--human-text); border: 1px solid #fcd34d;}
+        .badge-auto { background-color: #e2e8f0; color: var(--auto-text); }
+        .badge-engine { background-color: #c8e6c9; color: #1b5e20; }
+
+        ul { margin: 0; padding-left: 15px; }
+        li { margin-bottom: 6px; }
+        li b { font-weight: 700; }
+
+        @media (max-width: 1100px) {
+            .swimlane-container { grid-template-columns: 1fr; }
+            .engine-container-box { grid-column: 1; grid-template-columns: 1fr; border: none; padding: 0; }
+            .empty-header, .activity-header { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <h2>📊 AI 漏洞挖掘与修复：整体架构优化泳道图</h2>
+    <div class="subtitle">温馨提示：根据 2026/6/7 最新架构优化，第 2~4 阶段已合并封装为统一的 <span style="color:#1b5e20; font-weight:bold; background:#c8e6c9; padding:2px 6px; border-radius:4px;">【AI 挖掘引擎】</span> 抽象域，支持多种引擎实现体自由切换与并发调度</div>
+
+    <div class="swimlane-container">
+        
+        <div class="role-header empty-header"></div>
+        <div class="activity-header">1. 任务接入与资源分配<span>【漏洞扫描服务层】</span></div>
+        <div class="activity-header">2. 智能漏洞挖掘<span>【AI 挖掘引擎内部活动】</span></div>
+        <div class="activity-header">3. 自动化 PoC 验证<span>【AI 挖掘引擎内部活动】</span></div>
+        <div class="activity-header">4. 补丁生成与修复验证<span>【AI 挖掘引擎内部活动】</span></div>
+        <div class="activity-header">5. 最终门控与确认上线<span>【漏洞管理与消费端】</span></div>
+
+        <div class="role-header">🙋‍♂️ 用户角色<br>(安全/研发团队)</div>
+        
+        <div class="card card-human">
+            <span class="badge badge-human">🙋‍♂️ 研发触发 / 专项审计</span>
+            <ul>
+                <li><b>【多态输入】</b>提交或由 CI 触发<b>代码库、软件包（制品）、在线服务</b>等挖掘对象 [cite: 15, 27]。</li>
+                <li><b>【引擎指定】</b>根据审计目标，自主<b>指定特定的 AI 挖掘引擎实现体</b>。</li>
+            </ul>
+        </div>
+
+        <div class="engine-container-box">
+            <div class="engine-box-label">⚙️ AI 挖掘引擎（支持多种实现体切换）</div>
+            
+            <div class="card card-auto" style="border:none; padding:5px; background:transparent;">
+                <span class="badge badge-auto">⏳ 离线静默</span>
+                <ul>
+                    <li>研发团队无需感知底层的静态、动态或多 Agent 协作细节，保持离线 [cite: 42]。</li>
+                </ul>
+            </div>
+            <div class="card card-auto" style="border:none; padding:5px; background:transparent;">
+                <span class="badge badge-auto">⏳ 动态等待</span>
+                <ul>
+                    <li>无需人工复核，等待引擎自我触发沙箱验证，剔除幻觉误报 [cite: 22, 108]。</li>
+                </ul>
+            </div>
+            <div class="card card-auto" style="border:none; padding:5px; background:transparent;">
+                <span class="badge badge-auto">⏳ 方案等待</span>
+                <ul>
+                    <li>等待引擎自主验证补丁有效性与业务回归指标 [cite: 22, 73]。</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card card-human">
+            <span class="badge badge-human">🙋‍♂️ 关键人工活动</span>
+            <ul>
+                <li><b>【高危合规门控】</b>对 CVSS 评分 &ge; 7.0 触发的双重人工审核进行研判与终审 [cite: 71]。</li>
+                <li><b>【PR 确认合并】</b>在消费端一键 Approve 并批准发布流水线 [cite: 34, 83]。</li>
+            </ul>
+        </div>
+
+
+        <div class="role-header">💻 漏洞扫描服务层<br>& 平台看板</div>
+        
+        <div class="card card-auto" style="border-left-color: #2196f3; background: #f0f9ff;">
+            <span class="badge" style="background:#bae6fd; color:#0369a1;">⚙️ 核心调度中枢</span>
+            <ul>
+                <li><b>【任务生命周期管理】</b>统一接收并管理由 Git Hook/CI/CD 触发或手动提交的任务流 [cite: 22, 27]。</li>
+                <li><b>【LLM 并发配额调配】</b>统一管理底层多模型 API 并发算力 ，<b>为指定的 AI 引擎分配并发能力</b>，保障 LLM 吞吐量最优化 。</li>
+            </ul>
+        </div>
+
+        <div class="engine-container-box">
+            <div class="card card-auto" style="border:none; padding:5px; background:transparent;">
+                <span class="badge badge-platform">⚙️ 状态推流</span>
+                <ul>
+                    <li>渲染不同实现体引擎的实时分析日志与中间产物 [cite: 23]。</li>
+                </ul>
+            </div>
+            <div class="card card-auto" style="border:none; padding:5px; background:transparent;">
+                <span class="badge badge-platform">⚙️ 证据渲染</span>
+                <ul>
+                    <li>可视化呈现引擎 Exploiter 产出的 PoC 代码及数据流可达路径 [cite: 30, 59]。</li>
+                </ul>
+            </div>
+            <div class="card card-auto" style="border:none; padding:5px; background:transparent;">
+                <span class="badge badge-platform">⚙️ Diff 视图</span>
+                <ul>
+                    <li>直观展示多候选补丁的安全性、侵入性排序与单元测试报告 [cite: 22, 69]。</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 闭环输出</span>
+            <ul>
+                <li>根据 CVSS 自动分级拦截高危漏洞 [cite: 22, 71]，对于中低危全自动通过或推送 PR/Jira/Slack 闭环 [cite: 22, 71, 83]。</li>
+            </ul>
+        </div>
+
+
+        <div class="role-header">🤖 AI 核心引擎大脑<br>(实现体 A/B/...)</div>
+        
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 接收挂起</span>
+            <ul>
+                <li>接收扫描任务实体，挂起并等待服务层调配并注入 LLM 算力 Token 令牌。</li>
+            </ul>
+        </div>
+
+        <div class="engine-container-box">
+            <div class="card card-auto" style="border:none; padding:5px; background:transparent;">
+                <span class="badge badge-engine">⚙️ 指定实现体运转</span>
+                <ul>
+                    <li>在分配到的 <b>LLM 并发配额</b>内，按所选实现体驱动静态/动态/RAG及多 Agent 协作深度挖掘 。</li>
+                </ul>
+            </div>
+            <div class="card card-auto" style="border:none; padding:5px; background:transparent;">
+                <span class="badge badge-engine">⚙️ 动态靶场执行</span>
+                <ul>
+                    <li>在对应的隔离沙箱（如 gVisor 容器）中动态执行 PoC，锁定因果因果链并计算评分 [cite: 22, 66]。</li>
+                </ul>
+            </div>
+            <div class="card card-auto" style="border:none; padding:5px; background:transparent;">
+                <span class="badge badge-engine">⚙️ 补丁因果验证</span>
+                <ul>
+                    <li>Patcher Agent 生成 diff，临时分支重跑 PoC 与单测，<b>支持最多 3 次失败自动反馈重试回路</b> [cite: 36, 59]。</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card card-auto">
+            <span class="badge badge-auto">⚙️ 自动合并重扫</span>
+            <ul>
+                <li>接收人工授权信号，全自动完成分支合并（PR）[cite: 34]，并对生产主干触发最终的修复确认全量重扫 [cite: 38, 91]。</li>
+            </ul>
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 漏洞挖掘与修复 · 两泳道用户旅程图（v3.2）</title>
+<style>
+  :root{
+    --bg:#f4f7fb; --ink:#2c3e50; --border:#e2e8f0;
+    --navy:#1f3a5f; --steel:#2e74b5; --teal:#2c8c99; --green:#2e8b57;
+    /* 人工参与（琥珀金） */
+    --human-bg:#fffbeb; --human-bd:#d97706; --human-tx:#92400e;
+    /* AI 引擎自动（钢蓝） */
+    --eng-bg:#eef4fb; --eng-bd:#2e74b5; --eng-tx:#23415f;
+    /* 研发等待（冷灰） */
+    --wait-bg:#f1f5f9; --wait-bd:#94a3b8; --wait-tx:#475569;
+  }
+  *{box-sizing:border-box}
+  body{font-family:"Microsoft YaHei","PingFang SC",-apple-system,"Segoe UI",Roboto,sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.5;padding:28px;margin:0;}
+  h2{text-align:center;color:#1e293b;margin:0 0 4px;font-size:24px;}
+  .subtitle{text-align:center;color:#64748b;margin-bottom:8px;font-size:13.5px;}
+  .legend{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-bottom:22px;font-size:12px;color:#475569;}
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .key{width:26px;height:14px;border-radius:3px;display:inline-block;border-left-width:4px;border-left-style:solid;}
+  .k-human{background:var(--human-bg);border-left-color:var(--human-bd);border:1px solid #fde68a;}
+  .k-eng{background:var(--eng-bg);border-left-color:var(--eng-bd);border:1px solid #cfe0f1;}
+  .k-wait{background:var(--wait-bg);border-left-color:var(--wait-bd);border:1px solid #e2e8f0;}
+
+  .swimlane{display:grid;grid-template-columns:172px repeat(9,minmax(196px,1fr));gap:11px;
+            max-width:2280px;margin:0 auto;overflow-x:auto;padding-bottom:18px;}
+
+  .ah{background:#1e293b;color:#fff;padding:13px 9px;text-align:center;font-weight:bold;font-size:12.5px;
+      border-radius:6px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;}
+  .ah .n{font-size:15px;color:#7dd3fc;}
+  .ah .sub{font-weight:normal;font-size:10.5px;opacity:.72;}
+  .ah .t{background:#334155;padding:2px 7px;border-radius:4px;font-size:10px;color:#cbd5e1;margin-top:2px;}
+
+  .rh{color:#fff;padding:18px 12px;border-radius:6px;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;text-align:center;font-weight:bold;font-size:14px;gap:4px;}
+  .rh small{font-weight:normal;font-size:10.5px;opacity:.85;line-height:1.35;}
+  .rh.dev{background:linear-gradient(160deg,#2c8c99,#1f5b63);}
+  .rh.eng{background:linear-gradient(160deg,#2e74b5,#1f3a5f);}
+  .empty{background:transparent;}
+
+  .card{padding:12px 12px;border-radius:6px;border:1px solid var(--border);font-size:12px;
+        box-shadow:0 1px 2px rgba(0,0,0,.03);}
+  .card ul{margin:0;padding-left:15px;}
+  .card li{margin-bottom:5px;}
+  .card li:last-child{margin-bottom:0;}
+  .badge{display:inline-block;padding:2px 7px;font-size:10px;font-weight:bold;border-radius:4px;margin-bottom:7px;}
+
+  .card-human{background:var(--human-bg);border-left:5px solid var(--human-bd);border-top:1px solid #fde68a;
+              border-right:1px solid #fde68a;border-bottom:1px solid #fde68a;}
+  .card-human .badge{background:#fef3c7;color:var(--human-tx);border:1px solid #fcd34d;}
+  .card-human ul{color:#451a03;}
+  .card-eng{background:var(--eng-bg);border-left:5px solid var(--eng-bd);}
+  .card-eng .badge{background:#dbe9f7;color:var(--eng-tx);}
+  .card-eng ul{color:#23415f;}
+  .card-wait{background:var(--wait-bg);border-left:5px solid var(--wait-bd);opacity:.9;}
+  .card-wait .badge{background:#e2e8f0;color:var(--wait-tx);}
+  .card-wait ul{color:#334155;}
+  b{font-weight:700;}
+  .foot{max-width:2280px;margin:6px auto 0;font-size:11.5px;color:#64748b;text-align:center;}
+
+  @media(max-width:1400px){
+    .swimlane{display:block;}
+    .ah,.empty{display:none;}
+    .rh{border-radius:6px 6px 0 0;margin-top:22px;}
+    .card{border-radius:0;margin-bottom:8px;}
+  }
+</style>
+</head>
+<body>
+
+<h2>AI 漏洞挖掘与修复 · 两泳道用户旅程图</h2>
+<div class="subtitle">角色聚焦：<b>研发人员</b> ↔ <b>AI 挖掘引擎</b>（含 ① 漏洞扫描服务层调度，引擎多实现体·可插拔）　|　对齐架构 v3.2</div>
+<div class="legend">
+  <span><i class="key k-human"></i>研发人工环节（强制 approval / 门控）</span>
+  <span><i class="key k-eng"></i>AI 挖掘引擎自动环节</span>
+  <span><i class="key k-wait"></i>研发离线等待（零摩擦）</span>
+</div>
+
+<div class="swimlane">
+
+  <!-- 表头行：左上角空 + 9 个活动列 -->
+  <div class="rh empty"></div>
+  <div class="ah"><span class="n">1</span>提交 / 触发挖掘对象<span class="sub">研发触发 · ①受理</span><span class="t">&lt; 5 分钟</span></div>
+  <div class="ah"><span class="n">2</span>任务受理与调度<span class="sub">① 漏洞扫描服务层</span><span class="t">实时</span></div>
+  <div class="ah"><span class="n">3</span>分析与挖掘<span class="sub">②③ 引擎 · 多 Agent</span><span class="t">10～60 分钟</span></div>
+  <div class="ah"><span class="n">4</span>沙箱验证<span class="sub">④ 动态执行 · 评分</span><span class="t">5～15 分钟</span></div>
+  <div class="ah"><span class="n">5</span>自动修复<span class="sub">⑤ 多候选补丁</span><span class="t">10～20 分钟</span></div>
+  <div class="ah"><span class="n">6</span>修复验证<span class="sub">⑥ 三重验证闭环</span><span class="t">15～45 分钟</span></div>
+  <div class="ah"><span class="n">7</span>人工审核门控<span class="sub">按 CVSS 强制 approval</span><span class="t">≤ 24 小时</span></div>
+  <div class="ah"><span class="n">8</span>PR 合并<span class="sub">⑧ 研发落地</span><span class="t">按 SLA</span></div>
+  <div class="ah"><span class="n">9</span>修复后重新扫描<span class="sub">① 回流 · 终审</span><span class="t">同首次</span></div>
+
+  <!-- 泳道一：研发人员 -->
+  <div class="rh dev">🧑‍💻 研发人员<small>仓库 Owner / 研发 Lead<br>（安全团队可发起专项）</small></div>
+
+  <div class="card card-human">
+    <span class="badge">🙋 主动触发</span>
+    <ul>
+      <li><b>日常推送</b>：Git Push / 创建·更新 MR。</li>
+      <li><b>提交对象</b>：亦可提交 <b>代码库 / 软件包 / 在线服务</b> 作为挖掘对象（安全团队可 API 发起专项）。</li>
+    </ul>
+  </div>
+  <div class="card card-wait">
+    <span class="badge">⏳ 离线静默</span>
+    <ul><li>任务交由 ① 服务层调度，研发<b>无需干预、零摩擦</b>，不改变工作流。</li></ul>
+  </div>
+  <div class="card card-wait">
+    <span class="badge">⏳ 离线静默</span>
+    <ul><li>AI 挖掘引擎后台分析中，研发保持静默。</li></ul>
+  </div>
+  <div class="card card-wait">
+    <span class="badge">⏳ 动态等待</span>
+    <ul><li>沙箱已排除"幻觉"误报，<b>无需人工复核</b>。</li></ul>
+  </div>
+  <div class="card card-wait">
+    <span class="badge">⏳ 方案等待</span>
+    <ul><li>等待引擎生成并排序候选补丁。</li></ul>
+  </div>
+  <div class="card card-wait">
+    <span class="badge">⏳ 回归等待</span>
+    <ul><li>等待修复验证闭环（回归 / 副作用 / 安全扫描）跑完。</li></ul>
+  </div>
+  <div class="card card-human">
+    <span class="badge">🙋 关键门控</span>
+    <ul>
+      <li><b>分级审核</b>：低/中危 由研发 Owner/Lead <b>approval</b>；<b>高危·严重</b> 强制 <b>安全团队 + Lead 双重审核</b>。</li>
+      <li><b>无自动合并</b>：取消低危全自动合并，任何 AI 补丁<b>合并前都需人工 approval</b>。</li>
+    </ul>
+  </div>
+  <div class="card card-human">
+    <span class="badge">🙋 合并决策</span>
+    <ul>
+      <li><b>消费漏洞</b>：在 IDE 插件 / Web 看板查看验证报告与 diff 对比。</li>
+      <li><b>一键合并</b>：approval 后合并 PR（机器人无直接合并权，受分支保护）。</li>
+    </ul>
+  </div>
+  <div class="card card-wait">
+    <span class="badge">⏳ 闭环确认</span>
+    <ul><li>等待平台重扫判定根因是否<b>彻底消除</b> → 状态「已关闭」。</li></ul>
+  </div>
+
+  <!-- 泳道二：AI 挖掘引擎 -->
+  <div class="rh eng">🤖 AI 挖掘引擎<small>① 漏洞扫描服务层 + ②~⑥<br>多实现体 · 可插拔</small></div>
+
+  <div class="card card-eng">
+    <span class="badge">⚙️ 接入捕获</span>
+    <ul><li>Git Hook / Pipeline CI 捕获变更并校验托管授权，登记为<b>挖掘任务来源</b>。</li></ul>
+  </div>
+  <div class="card card-eng">
+    <span class="badge">⚙️ ① 服务层调度</span>
+    <ul>
+      <li><b>任务生命周期</b>：建任务、跟踪状态；按对象/等级<b>指定引擎实现体</b>（自研 / Codex 式 / Mythos·Glasswing 式）。</li>
+      <li><b>LLM 算力</b>：分配 <b>API 并发额度</b>，保证算力打满、不闲置、不超预算。</li>
+    </ul>
+  </div>
+  <div class="card card-eng">
+    <span class="badge">⚙️ ②③ 分析挖掘</span>
+    <ul>
+      <li>静态 <b>CodeQL/Semgrep</b> + 动态 <b>Syzkaller/AFL++</b> + 知识库 <b>RAG</b>。</li>
+      <li><b>Planner</b> 调度 Researcher→Analyst→<b>Exploiter</b>，产出根因与最小 <b>PoC</b>。</li>
+    </ul>
+  </div>
+  <div class="card card-eng">
+    <span class="badge">⚙️ ④ 沙箱验证</span>
+    <ul><li><b>容器 + microVM</b> 隔离（内核类走 VM、构建即沙箱）运行 PoC 触发 crash，映射 CWE，计算 <b>CVSS</b>。</li></ul>
+  </div>
+  <div class="card card-eng">
+    <span class="badge">⚙️ ⑤ 自动修复</span>
+    <ul><li><b>Patcher</b> 生成多候选 diff，按安全性/侵入性/置信度排序；<b>多维度门控</b>（CVSS×资产×侵入性×置信度）。</li></ul>
+  </div>
+  <div class="card card-eng">
+    <span class="badge">⚙️ ⑥ 修复验证</span>
+    <ul>
+      <li>回归（原 PoC + 变体）+ 副作用（单测 / 性能劣化 ≤5%）+ <b>独立工具链</b>二次安全扫描。</li>
+      <li><b>失败重试 ≤3 次</b>转人工；含<b>补丁回滚 / 熔断</b>。</li>
+    </ul>
+  </div>
+  <div class="card card-eng">
+    <span class="badge">⚙️ 阻断门控</span>
+    <ul><li>对达门限缺陷<b>下发审核工单</b>、冻结自动合入，等待人工 approval。</li></ul>
+  </div>
+  <div class="card card-eng">
+    <span class="badge">⚙️ 通知与 PR</span>
+    <ul><li>将通过验证的补丁封装为 <b>PR</b>（机器人最小权限、签名提交），经 <b>gitcode 待办/邮件</b> 推送；收到 approval 后执行合并。</li></ul>
+  </div>
+  <div class="card card-eng">
+    <span class="badge">⚙️ ① 终审重扫</span>
+    <ul><li>合并后由 ① 漏洞扫描服务层<b>重新下发全量扫描</b>，确认根因消除，状态机流转<b>「已关闭」</b>。</li></ul>
+  </div>
+
+</div>
+
+<div class="foot">
+  优化要点（对齐 v3.2）：① 接入层升级为「漏洞扫描服务层」承接任务生命周期与 LLM 并发分配；引擎 ②~⑥ 为可插拔多实现体；
+  沙箱改容器 + microVM；取消低危全自动合并、合并前强制人工 approval；新增补丁回滚/熔断；合并后由服务层重新下发全量扫描（第 9 列回流）。
+</div>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+
+digraph dataflow {
+  rankdir=TB;
+  bgcolor="white";
+  graph [fontname="WenQuanYi Micro Hei", fontsize=20, labelloc="t",
+         label="数据流向：发现 → 修复 → 验证 → 合并（含反馈回路）", nodesep=0.45, ranksep=0.45];
+  node [fontname="WenQuanYi Micro Hei", fontsize=15, shape=box, style="rounded,filled",
+        fillcolor="#EAF1F8", color="#2E74B5", penwidth=1.8, margin="0.22,0.12"];
+  edge [fontname="WenQuanYi Micro Hei", fontsize=12.5, color="#5B7088", penwidth=1.8, arrowsize=0.9];
+
+  change   [label="代码变更", fillcolor="#E7F0EF", color="#2C8C99"];
+  analyze  [label="静态 + 动态分析 + 知识库检索"];
+  agent    [label="Agent 协作（根因 / PoC）"];
+  sandbox  [label="沙箱验证"];
+  d1       [label="可触发?", shape=diamond, fillcolor="#FFF3DE", color="#E08A00", style="filled"];
+  fix      [label="自动修复引擎（多候选补丁）", fillcolor="#FFF3DE", color="#E08A00"];
+  verify   [label="修复验证闭环\n回归 / 副作用 / 安全扫描", fillcolor="#FFF3DE", color="#E08A00"];
+  d2       [label="验证通过?", shape=diamond, fillcolor="#FFF3DE", color="#E08A00", style="filled"];
+  pr       [label="创建 PR（附完整报告）"];
+  merge    [label="研发审核 · 人工合并", fillcolor="#E7F0EF", color="#2E8B57"];
+  rescan   [label="确认扫描 · 根因消除", fillcolor="#E7F0EF", color="#2E8B57"];
+
+  close    [label="标记误报 / 关闭", fillcolor="#F0E6E6", color="#B03A2E"];
+  retry    [label="重试 (≤3)\n反馈 Patcher", fillcolor="#FBEFD6", color="#E08A00"];
+  human    [label="转人工处理", fillcolor="#F0E6E6", color="#B03A2E"];
+
+  change -> analyze -> agent -> sandbox -> d1;
+  d1 -> fix   [label="是"];
+  d1 -> close [label="否", color="#B03A2E", fontcolor="#B03A2E"];
+  fix -> verify -> d2;
+  d2 -> pr    [label="是"];
+  d2 -> retry [label="否", color="#E08A00", fontcolor="#A86A00"];
+  retry -> fix [label="次数 < 3", style=dashed, constraint=false];
+  retry -> human [label="> 3 次", color="#B03A2E", fontcolor="#B03A2E", style=dashed];
+  pr -> merge -> rescan;
+  rescan -> analyze [label="复发 → 再分析", style=dashed, constraint=false, color="#5B7088"];
+
+  {rank=same; d1; close;}
+  {rank=same; d2; retry;}
+  {rank=same; fix; human;}
+}

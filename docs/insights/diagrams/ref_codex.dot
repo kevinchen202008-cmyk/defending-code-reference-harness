@@ -1,0 +1,47 @@
+
+digraph codex {
+  rankdir=TB; bgcolor="white"; compound=true;
+  graph [fontname="WenQuanYi Micro Hei", fontsize=20, labelloc="t",
+         label="参考架构 1：OpenAI Codex Security 流水线（识别 → 验证 → 修复）",
+         nodesep=0.4, ranksep=0.5];
+  node [fontname="WenQuanYi Micro Hei", fontsize=13.5, shape=box, style="rounded,filled",
+        fillcolor="#EAF1F8", color="#2E74B5", penwidth=1.7, margin="0.20,0.11"];
+  edge [fontname="WenQuanYi Micro Hei", fontsize=11, color="#5B7088", penwidth=1.7, arrowsize=0.85];
+
+  repo [label="连接代码仓库\n提交级（commit-by-commit）增量扫描", fillcolor="#E7F0EF", color="#2C8C99"];
+
+  subgraph cluster_id {
+    label="① 识别 Identification"; fontsize=15; color="#2E74B5"; style="rounded"; bgcolor="#F5F9FC";
+    tm     [label="项目威胁模型\n系统做什么 / 信任什么 / 最暴露处\n入口点·信任边界·鉴权假设·高风险组件"];
+    reason [label="AI 约束推理\n（刻意不出纯 SAST 报告）"];
+    slice  [label="抽取孤立代码切片\n→ 生成 micro-fuzzer", fillcolor="#FFFFFF"];
+    z3     [label="z3-solver 约束求解\n（复杂输入 / 整数溢出）", fillcolor="#FFFFFF"];
+  }
+
+  subgraph cluster_val {
+    label="② 验证 Validation"; fontsize=15; color="#E08A00"; style="rounded"; bgcolor="#FFF8EC";
+    sandbox  [label="沙箱执行 PoC 复现\n（上报前验证，压制误报）", fillcolor="#FFF3DE", color="#E08A00"];
+    evidence [label="记录 crash 输出 / 复现证据 /\n调用路径 / PoC 工件", fillcolor="#FFFFFF", color="#E08A00"];
+  }
+
+  subgraph cluster_fix {
+    label="③ 修复 Remediation"; fontsize=15; color="#2E8B57"; style="rounded"; bgcolor="#F0F7F2";
+    patch  [label="经 Codex 生成候选补丁", fillcolor="#E7F0EF", color="#2E8B57"];
+    review [label="审阅者检查后再开 PR", fillcolor="#E7F0EF", color="#2E8B57"];
+  }
+
+  findings [label="排序输出：严重性 · 验证状态 · 建议补丁\n（仅上报高信号、已验证问题）", fillcolor="#EAF1F8", color="#1F3A5F", penwidth=2];
+
+  repo -> tm;
+  tm -> reason;
+  slice -> reason [style=dashed, color="#2C8C99"];
+  z3 -> reason [style=dashed, color="#2C8C99"];
+  reason -> sandbox [lhead=cluster_val];
+  sandbox -> evidence;
+  evidence -> patch [lhead=cluster_fix];
+  patch -> review;
+  review -> findings;
+
+  edge [style=dashed, color="#8A5300", fontcolor="#8A5300", constraint=false];
+  findings -> reason [label="规模化 → 误报率累计 ↓ > 50%"];
+}

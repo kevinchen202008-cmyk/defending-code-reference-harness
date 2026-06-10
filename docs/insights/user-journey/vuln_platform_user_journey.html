@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>内部漏洞挖掘平台 · 用户作业旅程地图（v3.1）</title>
+<style>
+  :root{
+    --navy:#1F3A5F; --steel:#2E74B5; --teal:#2C8C99; --amber:#E08A00;
+    --green:#2E8B57; --slate:#5B7088; --red:#B03A2E; --ink:#222;
+    --bg:#F4F7FB; --line:#D8E1EC;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",system-ui,sans-serif;
+       color:var(--ink);background:var(--bg);line-height:1.6;}
+  header.top{background:linear-gradient(135deg,#1F3A5F,#2E74B5);color:#fff;padding:30px 28px 26px;}
+  header.top h1{margin:0 0 6px;font-size:24px;letter-spacing:.5px;}
+  header.top .sub{opacity:.9;font-size:13.5px;}
+  header.top .meta{margin-top:12px;font-size:12px;opacity:.8;}
+  .wrap{max-width:1280px;margin:0 auto;padding:22px;}
+  .intro{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin-bottom:18px;font-size:13.5px;color:#33414F;}
+  .intro b{color:var(--navy);}
+  /* tabs */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:20;background:var(--bg);padding:12px 0;}
+  .tab{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:30px;padding:9px 18px;font-size:14px;
+       font-weight:600;color:var(--slate);display:flex;align-items:center;gap:8px;transition:.15s;}
+  .tab:hover{border-color:var(--steel);}
+  .tab.active{color:#fff;border-color:transparent;}
+  .tab[data-role="dev"].active{background:var(--teal);}
+  .tab[data-role="lead"].active{background:var(--steel);}
+  .tab[data-role="sec"].active{background:var(--amber);}
+  .tab .ic{font-size:17px;}
+  /* role panel */
+  .panel{display:none;animation:fade .25s ease;}
+  .panel.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .rolehead{display:flex;align-items:center;gap:14px;margin:6px 0 4px;}
+  .rolehead .badge{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:24px;color:#fff;flex:none;}
+  .rolehead h2{margin:0;font-size:19px;}
+  .rolehead p{margin:2px 0 0;font-size:13px;color:var(--slate);}
+  /* emotion curve */
+  .curvebox{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 6px 4px;margin:14px 0;overflow-x:auto;}
+  .curvebox .lab{font-size:12px;color:var(--slate);padding:0 12px 4px;font-weight:600;}
+  /* journey grid */
+  .journey{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:14px;overflow-x:auto;padding-bottom:10px;}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;}
+  .stage .hd{padding:12px 14px;color:#fff;}
+  .stage .hd .n{font-size:12px;opacity:.85;}
+  .stage .hd .t{font-size:15px;font-weight:700;margin-top:2px;}
+  .stage .body{padding:12px 14px;font-size:12.8px;display:flex;flex-direction:column;gap:11px;}
+  .row .k{font-size:11px;font-weight:700;color:var(--slate);display:flex;align-items:center;gap:5px;margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px;}
+  .row .v{color:#33414F;}
+  .row.touch .v{color:var(--steel);}
+  .chip{display:inline-block;background:#EAF1F8;color:var(--steel);border-radius:5px;padding:1px 7px;margin:2px 4px 0 0;font-size:11.5px;}
+  .row.pain{background:#FBEEEC;border-left:3px solid var(--red);padding:8px 10px;border-radius:0 6px 6px 0;}
+  .row.pain .k{color:var(--red);}
+  .row.pain .miti{color:var(--green);margin-top:4px;font-weight:600;}
+  .row.support{background:#EFF6F1;border-left:3px solid var(--green);padding:8px 10px;border-radius:0 6px 6px 0;}
+  .row.support .k{color:var(--green);}
+  .emo{font-size:22px;}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--slate);margin:10px 2px 0;}
+  .legend span{display:flex;align-items:center;gap:5px;}
+  .sw{width:12px;height:12px;border-radius:3px;display:inline-block;}
+  footer{max-width:1280px;margin:10px auto 36px;padding:0 22px;font-size:11.5px;color:var(--slate);}
+  @media print{.tabs{position:static}.panel{display:block!important;page-break-after:always}.tab{display:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>内部漏洞挖掘平台 · 用户作业旅程地图</h1>
+  <div class="sub">从用户视角，描绘三类角色使用平台「发现 → 修复 → 验证 → 合并」全闭环的作业旅程</div>
+  <div class="meta">版本 v3.2（漏洞扫描服务层 + 可插拔 AI 挖掘引擎）　·　维度：阶段 × 用户动作 × 系统触点 × 情绪 × 痛点与平台支撑</div>
+</header>
+
+<div class="wrap">
+  <div class="intro">
+    本图覆盖 <b>研发工程师 / 仓库 Owner</b>、<b>研发 Lead</b>、<b>安全团队 / 平台运营</b> 三类角色。每条旅程沿平台闭环展开，
+    并已结合 <b>v3.2 架构优化</b>刷新：① 由 <b>漏洞扫描服务层</b>统一承接任务（待挖掘对象＝代码库/软件包/在线服务）与 <b>LLM 并发算力</b>分配；
+    ② <b>AI 挖掘引擎</b>多实现体、可插拔（自研 / Codex Security 式 / Claude Mythos·Glasswing 式），按任务选型；③ 修复合并后由服务层<b>重新下发全量扫描</b>确认根因消除。
+    顶部为<b>情绪曲线</b>，下方每个阶段卡片列出该角色的<b>用户动作</b>、<b>系统触点</b>、<b>情绪</b>、以及<b>痛点与对应的平台支撑</b>。
+    <div class="legend">
+      <span><i class="sw" style="background:var(--teal)"></i>研发工程师/Owner</span>
+      <span><i class="sw" style="background:var(--steel)"></i>研发 Lead</span>
+      <span><i class="sw" style="background:var(--amber)"></i>安全团队/运营</span>
+      <span>情绪：😣 很受压　😟 焦虑　😐 中性　🙂 顺畅　😄 安心</span>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-role="dev"><span class="ic">👩‍💻</span>研发工程师 / 仓库 Owner</div>
+    <div class="tab" data-role="lead"><span class="ic">🧑‍✈️</span>研发 Lead</div>
+    <div class="tab" data-role="sec"><span class="ic">🛡️</span>安全团队 / 平台运营</div>
+  </div>
+
+  <div id="panels"></div>
+</div>
+
+<footer>
+  数据来源：内部漏洞挖掘平台整体架构设计文档 v3.1（八层架构 · 自动修复与验证闭环 · 第 9 章威胁模型 · 第 5 章 SLA）。
+  本旅程地图为单文件 HTML，可直接在浏览器查看或打印（每角色一页）。
+</footer>
+
+<script>
+const ROLES = {
+  dev: {
+    name:"研发工程师 / 仓库 Owner", icon:"👩‍💻", color:"var(--teal)", hex:"#2C8C99",
+    subtitle:"消费端主力：接收漏洞、阅读报告、审阅 AI 补丁、审批合并、闭环确认（以低/中危为主）",
+    stages:[
+      {t:"提交 / 推送挖掘对象", emo:1,
+       action:"照常 push 代码 / 提 PR；亦可提交代码库 · 软件包 · 在线服务作为挖掘对象。① 漏洞扫描服务层据此创建挖掘任务。",
+       touch:["Git Hook / CI","① 漏洞扫描服务层","IDE 插件"],
+       pain:"担心安全门控拖慢推送、卡住流水线。", miti:"平台支撑：① 漏洞扫描服务层统一接任务；接入默认异步非阻塞，故障时 fail-open 不阻断推送。"},
+      {t:"收到漏洞通知", emo:-1,
+       action:"在指派给自己的工单/消息里看到新漏洞，附严重级别与产品线。",
+       touch:["Jira Security Ticket","Slack / 企微","IDE 实时提示"],
+       pain:"通知过多产生疲劳，分散精力。", miti:"平台支撑：⑦ 报告与通知——72h 去重与通知抑制，避免重复告警。"},
+      {t:"阅读漏洞报告", emo:1,
+       action:"查看报告：CVE/CWE/CVSS、复现步骤、根因分析、修复说明、验证结果。",
+       touch:["PR 描述","Web 看板"],
+       pain:"怀疑是误报、白白浪费时间。", miti:"平台支撑：④ 沙箱已执行 PoC 复现，仅上报已确认漏洞，误报被强制过滤。"},
+      {t:"审阅 AI 候选补丁", emo:0,
+       action:"review 平台生成的补丁 diff，对照回归/副作用/安全扫描报告。",
+       touch:["PR diff","CI 验证状态"],
+       pain:"担心 AI 补丁改坏业务逻辑或埋后门。", miti:"平台支撑：⑤⑥ 独立工具链安全扫描 + 后门特征检查 + 验证三重通过，且可一键回滚。"},
+      {t:"审批与合并", emo:1,
+       action:"人工 approval 后合并（低危 72h / 中危 48h SLA）。",
+       touch:["PR 合并 / 分支保护","机器人最小权限"],
+       pain:"怕补丁被自动合并、失去控制。", miti:"平台支撑：⑧ 取消低危全自动合并——合并前强制人工 approval，机器人无直接合并权。"},
+      {t:"合并后闭环", emo:2,
+       action:"合并后 ① 漏洞扫描服务层重新下发全量扫描，确认根因消除，状态流转「已关闭」；异常自动熔断/回滚。",
+       touch:["① 重新下发扫描","看板状态机","闭环通知"],
+       pain:"修复后漏洞复发、反复处理。", miti:"平台支撑：修复后重扫回流 + 状态机「复发→修复中」并设全生命周期循环上限。"}
+    ]
+  },
+  lead: {
+    name:"研发 Lead", icon:"🧑‍✈️", color:"var(--steel)", hex:"#2E74B5",
+    subtitle:"把关者：审核中/高危补丁、把控合并门控、跟踪团队修复 SLA 与回归",
+    stages:[
+      {t:"团队安全态势总览", emo:0,
+       action:"查看本产品线安全评分、SLA 达成、漏洞趋势。",
+       touch:["Web 看板","邮件周报"],
+       pain:"缺乏全局视图，难判断风险与进度。", miti:"平台支撑：⑦/⑧ 看板趋势图 + SLA 跟踪 + 各产品线安全评分。"},
+      {t:"收到中/高危审核请求", emo:-1,
+       action:"中危补丁需我审核；高危需与安全团队双重审核。",
+       touch:["Slack 高危实时推送","PR","Jira"],
+       pain:"高危被淹没在噪声里、错过时效。", miti:"平台支撑：高危及以上实时推送 + 按优先级排序（CVSS×资产×暴露面）。"},
+      {t:"评估补丁与风险", emo:0,
+       action:"查看多维度门控信息、候选补丁排序与权衡、完整验证报告。",
+       touch:["PR","平台门控视图"],
+       pain:"低 CVSS 漏洞却位于鉴权/支付等关键路径。", miti:"平台支撑：⑤ 门控不只看 CVSS——综合资产关键性 × 补丁侵入性 × 置信度。"},
+      {t:"高危双重审核", emo:1,
+       action:"与安全团队会签补丁草稿，确认修复方案与影响面。",
+       touch:["双重审核工作流"],
+       pain:"责任不清、事后难追溯。", miti:"平台支撑：全链路留痕（生成模型/提示/候选排序/验证/审核人），抵赖防护。"},
+      {t:"批准 / 打回", emo:0,
+       action:"approval 合并；或打回，触发自动重试（≤3 次重生成补丁）。",
+       touch:["PR 审批"],
+       pain:"反复收到无效补丁、空耗精力。", miti:"平台支撑：⑥ 重试 ≤3 次转人工 + 全生命周期循环上限，避免无限重试。"},
+      {t:"跟踪 SLA 与回归", emo:1,
+       action:"监控团队修复 SLA、关注复发与熔断告警。",
+       touch:["看板 SLA","熔断告警"],
+       pain:"坏补丁批量扩散影响多仓库。", miti:"平台支撑：3.6.3 熔断机制——异常即暂停同类自动 PR 生成并通知。"}
+    ]
+  },
+  sec: {
+    name:"安全团队 / 平台运营", icon:"🛡️", color:"var(--amber)", hex:"#E08A00",
+    subtitle:"编排挖掘任务与算力、运营平台、处置高危/严重、专项审计与负责任披露，并守护平台自身安全",
+    stages:[
+      {t:"下发挖掘任务 · 引擎选型", emo:0,
+       action:"提交待挖掘对象（代码库 / 软件包 / 在线服务），为任务指定 AI 挖掘引擎实现体并设优先级。",
+       touch:["① 漏洞扫描服务层","任务看板 / API"],
+       pain:"对象类型多样、不同场景需适配不同引擎。", miti:"平台支撑：① 统一任务模型 + AI 挖掘引擎多实现体可插拔（自研 / Codex 式 / Mythos 式），按任务选型与对比。"},
+      {t:"LLM 算力（并发）调度", emo:0,
+       action:"为各任务/引擎分配 LLM API 并发额度，监控利用率，保证算力打满、不闲置、不超预算。",
+       touch:["并发 / 配额看板","成本看板"],
+       pain:"LLM 并发是稀缺资源，易闲置或超预算。", miti:"平台支撑：① 统一纳管并发 + 配额/抢占/空闲回收；月度预算上限 + 降级；核心代码仅分配私有部署 LLM。"},
+      {t:"平台运营与安全基线", emo:0,
+       action:"监控总览、误报/漏报 KPI、产品线覆盖率，维护平台 RBAC。",
+       touch:["Web 看板","管理后台 / RBAC"],
+       pain:"只考核误报会诱使系统压制告警、抬高漏报。", miti:"平台支撑：KPI 同时考核漏报率/召回（种子漏洞基准）与 MTTD。"},
+      {t:"严重漏洞应急响应", emo:-2,
+       action:"CVSS 9–10 立即告警，24h 紧急响应，人工制定修复方案。",
+       touch:["Slack/企微实时推送","PoC 库（双因素+审批）"],
+       pain:"PoC 具实际攻击力，泄露即成内部武器库。", miti:"平台支撑：6.1 PoC AES-256 加密 + 强 RBAC + 审计 + 与代码库隔离。"},
+      {t:"高危双重审核", emo:-1,
+       action:"与研发 Lead 会签高危补丁草稿，确认无副作用。",
+       touch:["双重审核工作流"],
+       pain:"提示注入可操纵 Agent 漏报或在补丁中埋后门。", miti:"平台支撑：第 9 章——产物经独立工具二次校验 + 补丁后门特征扫描。"},
+      {t:"处置「需人工处理」队列", emo:-1,
+       action:"攻坚由重试>3次/超时/测试缺失升级来的疑难漏洞。",
+       touch:["人工处理工单","沙箱（microVM）"],
+       pain:"内核类 PoC 可能沙箱逃逸触达宿主。", miti:"平台支撑：④ 内核类用 KVM/microVM 一次性虚机、禁网、无宿主凭据。"},
+      {t:"误报/漏报治理与调优", emo:1,
+       action:"用误报数据持续微调、以种子漏洞测召回、优化规则。",
+       touch:["平台分析视图","成本看板"],
+       pain:"多 Agent 推理 + 补丁生成致 LLM 成本失控。", miti:"平台支撑：月度预算上限 + 降级开关，非核心走更经济模型。"},
+      {t:"合规与负责任披露", emo:1,
+       action:"第三方 0day 走 90 天协调披露、申请 CVE、出审计报告。",
+       touch:["协调披露流程","审计日志（留存 180 天）"],
+       pain:"披露/授权不当带来法务与声誉风险。", miti:"平台支撑：6.3 负责任披露原则 + 全流程可审计记录。"},
+      {t:"守护平台自身", emo:0,
+       action:"常态化红队评估、轮换机器人凭据、维护信任边界。",
+       touch:["平台红队","凭据按域隔离"],
+       pain:"平台聚合利用能力，是公司最高价值攻击目标。", miti:"平台支撑：第 9 章 Fail-safe——单点失陷不致全局沦陷。"}
+    ]
+  }
+};
+
+const EMO = {"-2":"😣","-1":"😟","0":"😐","1":"🙂","2":"😄"};
+const EMOTXT = {"-2":"很受压","-1":"焦虑","0":"中性","1":"顺畅","2":"安心"};
+
+function emotionCurve(stages, hex){
+  const n=stages.length, W=Math.max(620, n*230), H=120, padX=115, padTop=18, padBot=26;
+  const innerW=W-padX-40, stepX=innerW/(n-1||1);
+  const yOf=v=>padTop+((2-v)/4)*(H-padTop-padBot);
+  let pts=stages.map((s,i)=>[padX+i*stepX, yOf(s.emo)]);
+  let poly=pts.map(p=>p.join(",")).join(" ");
+  let dots=pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="#fff" stroke="${hex}" stroke-width="2.5"/>
+     <text x="${p[0]}" y="${p[1]-12}" text-anchor="middle" font-size="17">${EMO[stages[i].emo]}</text>`).join("");
+  let grid=[2,1,0,-1,-2].map(v=>`<line x1="${padX-8}" y1="${yOf(v)}" x2="${W-30}" y2="${yOf(v)}" stroke="#EEF2F7"/>
+     <text x="${padX-14}" y="${yOf(v)+4}" text-anchor="end" font-size="10" fill="#8A97A6">${EMOTXT[v]}</text>`).join("");
+  return `<div class="curvebox"><div class="lab">情绪曲线（沿作业旅程）</div>
+    <svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">
+      ${grid}<polyline points="${poly}" fill="none" stroke="${hex}" stroke-width="2.5"/>${dots}
+    </svg></div>`;
+}
+
+function renderRole(key){
+  const r=ROLES[key];
+  const cards=r.stages.map((s,i)=>`
+    <div class="stage">
+      <div class="hd" style="background:${r.hex}"><div class="n">阶段 ${i+1}</div><div class="t">${s.t}</div></div>
+      <div class="body">
+        <div class="row"><div class="k">🎯 用户动作</div><div class="v">${s.action}</div></div>
+        <div class="row touch"><div class="k">🖥️ 系统触点</div><div class="v">${s.touch.map(t=>`<span class="chip">${t}</span>`).join("")}</div></div>
+        <div class="row"><div class="k">😊 情绪</div><div class="v"><span class="emo">${EMO[s.emo]}</span> ${EMOTXT[s.emo]}</div></div>
+        <div class="row pain"><div class="k">⚠️ 痛点</div><div class="v">${s.pain}<div class="miti">✅ ${s.miti}</div></div></div>
+      </div>
+    </div>`).join("");
+  return `<div class="panel${key==='dev'?' active':''}" data-panel="${key}">
+    <div class="rolehead"><div class="badge" style="background:${r.hex}">${r.icon}</div>
+      <div><h2>${r.name}</h2><p>${r.subtitle}</p></div></div>
+    ${emotionCurve(r.stages, r.hex)}
+    <div class="journey">${cards}</div>
+  </div>`;
+}
+
+document.getElementById("panels").innerHTML = Object.keys(ROLES).map(renderRole).join("");
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+    tab.classList.add("active");
+    document.querySelector(`.panel[data-panel="${tab.dataset.role}"]`).classList.add("active");
+  });
+});
+</script>
+</body>
+</html>

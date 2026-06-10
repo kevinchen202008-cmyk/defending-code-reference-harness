@@ -1,0 +1,35 @@
+
+digraph lifecycle {
+  rankdir=TB;
+  bgcolor="white";
+  graph [fontname="WenQuanYi Micro Hei", fontsize=20, labelloc="t",
+         label="漏洞生命周期状态机（v3.2）", nodesep=0.5, ranksep=0.5];
+  node [fontname="WenQuanYi Micro Hei", fontsize=15, shape=box, style="rounded,filled",
+        fillcolor="#EAF1F8", color="#2E74B5", penwidth=1.8, margin="0.26,0.13"];
+  edge [fontname="WenQuanYi Micro Hei", fontsize=12, color="#5B7088", penwidth=1.7, arrowsize=0.9];
+
+  found  [label="已发现"];
+  analyze[label="分析中"];
+  topoc  [label="待验证"];
+  conf   [label="已确认"];
+  fixing [label="修复中", fillcolor="#FFF3DE", color="#E08A00"];
+  review [label="待审核"];
+  fixed  [label="已修复", fillcolor="#E7F0EF", color="#2E8B57"];
+  closed [label="已关闭", fillcolor="#E7F0EF", color="#2E8B57", shape="box", peripheries=2];
+  human  [label="需人工处理", fillcolor="#F0E6E6", color="#B03A2E"];
+
+  found  -> analyze [label="Agent 接手"];
+  analyze-> topoc   [label="PoC 生成"];
+  topoc  -> conf    [label="crash 触发确认"];
+  conf   -> fixing  [label="进入修复 / CVSS 评分"];
+  fixing -> fixing  [label="验证失败，计数+1（≤3）", color="#E08A00", fontcolor="#A86A00"];
+  fixing -> human   [label="重试 > 3 次", color="#B03A2E", fontcolor="#B03A2E", constraint=false];
+  fixing -> review  [label="三重验证通过"];
+  review -> fixed   [label="PR 合并"];
+  fixed  -> closed  [label="重扫通过"];
+  fixed  -> fixing  [label="重扫复发，计数+1", color="#E08A00", fontcolor="#A86A00", constraint=false];
+  conf   -> closed  [label="标记误报 / 接受风险", color="#B03A2E", fontcolor="#B03A2E", style=dashed, constraint=false];
+  human  -> review  [label="人工修复后", style=dashed, constraint=false];
+
+  {rank=same; fixing; human;}
+}
