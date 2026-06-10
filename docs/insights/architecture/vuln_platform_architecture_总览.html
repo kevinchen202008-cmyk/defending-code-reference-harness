@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>内部漏洞挖掘平台 · 架构总览（v3.3）</title>
+<style>
+  :root{
+    --navy:#1F3A5F; --steel:#2E74B5; --teal:#2C8C99; --green:#2E8B57;
+    --amber:#E08A00; --slate:#5B7088; --ink:#33414F; --grey:#6B7B8C;
+    --bg:#F7F9FC;
+    --steelf:#EAF1F8; --amberf:#FFF3DE; --greenf:#E7F0EF; --slatef:#F4F6F9;
+    --greyf:#F2F4F7; --tealf:#E7F0EF; --svcf:#F2F7FC; --engf:#EDF2F9;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:"Microsoft YaHei","PingFang SC",-apple-system,"Segoe UI",sans-serif;
+       padding:26px;line-height:1.5;}
+  h1{text-align:center;color:var(--navy);font-size:23px;margin:0 0 4px;}
+  .sub{text-align:center;color:var(--grey);font-size:13px;margin-bottom:18px;}
+  .wrap{max-width:1180px;margin:0 auto;}
+  .arrow{text-align:center;color:var(--slate);font-size:20px;line-height:1;margin:5px 0;}
+  .arrow.green{color:var(--green);}
+
+  .band{border-radius:12px;padding:12px 14px;}
+  .svc{background:var(--svcf);border:2px solid var(--steel);}
+  .band-h{font-weight:700;color:var(--navy);font-size:15px;margin-bottom:10px;}
+
+  .row{display:flex;gap:10px;align-items:stretch;}
+  .row.center{justify-content:center;}
+  .card{flex:1;border-radius:8px;border:1.5px solid var(--steel);background:var(--steelf);
+        padding:9px 8px;text-align:center;display:flex;flex-direction:column;justify-content:center;}
+  .card .t{font-weight:700;font-size:12.5px;color:var(--navy);}
+  .card .d{font-size:10.5px;color:var(--ink);margin-top:3px;}
+  .card.teal{background:var(--tealf);border-color:var(--teal);}
+  .card.teal .t{color:#1F5B63;}
+  .card.opt{background:var(--slatef);border:1.6px dashed var(--slate);}
+  .card.opt .t{color:#3B5B7A;}
+  .card.new{background:var(--amberf);border-color:var(--amber);}
+  .card.new .t{color:#8A5300;}
+  .card.green{background:var(--greenf);border-color:var(--green);}
+  .card.green .t{color:#1F5B40;}
+  .conn{flex:0 0 18px;display:flex;align-items:center;justify-content:center;color:#B7C3D0;font-size:16px;font-weight:bold;}
+
+  .support{margin-top:10px;background:var(--greyf);border:1px solid var(--slate);border-radius:8px;
+           padding:8px 12px;font-size:11.5px;color:var(--ink);text-align:center;}
+  .support b{color:var(--slate);}
+  .support .emg{color:var(--teal);font-weight:700;}
+
+  .eng{background:var(--engf);border:2px dashed var(--navy);max-width:82%;margin:0 auto;}
+  .eng .band-h{text-align:center;margin-bottom:3px;}
+  .eng .impl{text-align:center;font-size:10.5px;color:var(--slate);margin-bottom:10px;}
+  .pill{flex:1;border-radius:18px;border:1.4px solid var(--steel);background:var(--steelf);
+        padding:8px 6px;text-align:center;font-weight:700;font-size:12px;color:var(--navy);}
+  .pill.new{background:var(--amberf);border-color:var(--amber);color:#8A5300;}
+
+  .base{text-align:center;color:var(--grey);font-size:12px;margin:12px 0 8px;font-style:italic;}
+  .loop{background:var(--greenf);border:1.4px solid var(--green);border-radius:8px;
+        padding:9px 14px;color:#1F5B40;font-weight:700;font-size:12.5px;display:flex;align-items:center;gap:10px;}
+  .loop .ic{color:var(--green);font-size:18px;}
+  .legend{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--slate);margin-top:14px;}
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .sw{width:22px;height:12px;border-radius:3px;display:inline-block;}
+</style>
+</head>
+<body>
+<h1>内部漏洞挖掘平台 · 架构总览</h1>
+<div class="sub">v3.3 ｜ 漏洞扫描服务层（任务模型 + 5 支撑能力）· 可插拔 AI 挖掘引擎 · 修复后重新扫描回流</div>
+
+<div class="wrap">
+
+  <!-- ① 漏洞扫描服务层 -->
+  <div class="band svc">
+    <div class="band-h">① 漏洞扫描服务层（任务编排 · 资源与能力管理）</div>
+    <div class="row">
+      <div class="card teal"><div class="t">接收任务</div><div class="d">CI 触发 / 人工提交</div></div>
+      <div class="conn">▶</div>
+      <div class="card"><div class="t">挖掘对象（必选）</div><div class="d">代码库 / 软件包 / 在线服务</div></div>
+      <div class="card"><div class="t">AI 挖掘引擎（必选）</div><div class="d">指定实现体</div></div>
+      <div class="card opt"><div class="t">沙箱环境配置（可选）</div><div class="d">容器 / microVM</div></div>
+      <div class="card opt"><div class="t">产品知识配置（可选）</div><div class="d">知识库 / 历史漏洞</div></div>
+    </div>
+    <div class="support">
+      <b>支撑能力（背书可选配置、算力与引擎）：</b>任务生命周期 · LLM 能力(API并发) · 沙箱环境资源池 · 产品知识库 ·
+      <span class="emg">挖掘引擎管理服务（开源/自研多引擎 · 可插拔式热管理）</span>
+    </div>
+  </div>
+
+  <div class="arrow">▼</div>
+
+  <!-- AI 挖掘引擎（简化·缩小） -->
+  <div class="band eng">
+    <div class="band-h">【AI 挖掘引擎】 ②~⑥ 为一体 · 多实现体 · 可插拔（黑盒）</div>
+    <div class="impl">实现体（可插拔·热插拔，由 ① 挖掘引擎管理服务热管理）：自研多-Agent · Codex Security 式 · Claude Mythos / Glasswing 式</div>
+    <div class="row center">
+      <div class="pill">② 分析引擎</div><div class="conn">▶</div>
+      <div class="pill">③ Agent 编排</div><div class="conn">▶</div>
+      <div class="pill">④ 沙箱验证</div><div class="conn">▶</div>
+      <div class="pill new">⑤ 自动修复</div><div class="conn">▶</div>
+      <div class="pill new">⑥ 修复验证</div>
+    </div>
+  </div>
+
+  <div class="arrow green">▼</div>
+
+  <!-- 输出 → 漏洞管理 → 研发消费 -->
+  <div class="row">
+    <div class="card green" style="flex:1.0"><div class="t">① 输出</div><div class="d">漏洞结果 → 同步生成 DTS / PR（按需）</div></div>
+    <div class="conn">▶</div>
+    <div class="card" style="flex:1.2"><div class="t">⑦ 漏洞管理 / 报告与通知</div><div class="d">去重 · 优先级 · 状态机 ｜ DTS · PR · 看板 · 邮件</div></div>
+    <div class="conn">▶</div>
+    <div class="card green" style="flex:1.1"><div class="t">⑧ 研发消费端</div><div class="d">审核 · 合并 · 确认（合并前强制人工 approval）</div></div>
+  </div>
+
+  <div class="base">底座：LLM 核心（Claude API / 私有部署）— 并发额度由 ① 漏洞扫描服务层统一分配</div>
+
+  <div class="loop"><span class="ic">↺</span>回流：⑧ 修复合并后 → ① 漏洞扫描服务层重新下发全量扫描，确认根因彻底消除</div>
+
+  <div class="legend">
+    <span><i class="sw" style="background:var(--steelf);border:1.5px solid var(--steel)"></i>必选要素 / 引擎子层</span>
+    <span><i class="sw" style="background:var(--slatef);border:1.6px dashed var(--slate)"></i>可选配置</span>
+    <span><i class="sw" style="background:var(--amberf);border:1.5px solid var(--amber)"></i>新增（自动修复/验证）</span>
+    <span><i class="sw" style="background:var(--greenf);border:1.5px solid var(--green)"></i>输出 / 研发消费 / 回流</span>
+  </div>
+
+</div>
+</body>
+</html>
