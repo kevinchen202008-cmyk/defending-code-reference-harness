@@ -57,21 +57,26 @@ from .prompts.system_prompt import build_system_prompt
 
 
 NO_AUTH_MSG = (
-    "error: no Anthropic auth found. Set one of:\n"
-    "  ANTHROPIC_API_KEY                     (long-lived key)\n"
+    "error: no API auth found. Set one of:\n"
+    "  DEEPSEEK_API_KEY                      (DeepSeek API key)\n"
+    "  ANTHROPIC_API_KEY                     (Anthropic long-lived key)\n"
     "  CLAUDE_CODE_OAUTH_TOKEN               (from `claude setup-token`)"
 )
 
 
 def _resolve_auth_env() -> dict[str, str] | None:
-    """Resolve auth for the in-container `claude -p` process. Returns the env
-    dict set on the agent container at ``docker run`` time, or None if no auth
-    is configured.
+    """Resolve auth for the in-container agent process. Returns the env dict
+    set on the agent container at ``docker run`` time, or None if no auth is
+    configured.
 
     Precedence:
-      1. ANTHROPIC_API_KEY            — long-lived key
-      2. CLAUDE_CODE_OAUTH_TOKEN      — subscription-plan token
+      1. DEEPSEEK_API_KEY             — DeepSeek API key (deepseek_runner.py)
+      2. ANTHROPIC_API_KEY            — Anthropic long-lived key
+      3. CLAUDE_CODE_OAUTH_TOKEN      — subscription-plan token
     """
+    deepseek_key = os.environ.get("DEEPSEEK_API_KEY")
+    if deepseek_key:
+        return {"DEEPSEEK_API_KEY": deepseek_key}
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if api_key:
         return {"ANTHROPIC_API_KEY": api_key}
