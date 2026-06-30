@@ -1,0 +1,1 @@
+每个管道阶段对应一个模块：find.py（构造输入、搜索崩溃、产出 CrashArtifact）、grade.py（在全新容器中验证 3/3 可重现性）、judge.py（NEW/DUP_BETTER/DUP_SKIP，带串行锁）、recon.py（攻击面分区）、report.py（可利用性分析 + 评分代理）、patch.py（diff 生成 + 通过 patch_grade.py 执行 T0-T3 梯队验证）。每个模块构建提示、调用 run_agent()，并解析 XML 标签输出。

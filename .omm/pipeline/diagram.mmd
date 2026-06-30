@@ -1,0 +1,25 @@
+graph LR
+    classDef entry fill:#89b4fa,stroke:#89b4fa,color:#1e1e2e
+    classDef store fill:#a6e3a1,stroke:#a6e3a1,color:#1e1e2e
+    classDef concern fill:#f38ba8,stroke:#f38ba8,color:#1e1e2e
+
+    build["Build Stage\nDockerfile → ASAN image"]:::entry
+    recon["Recon Stage\nharness/recon.py"]
+    find["Find Stage\nharness/find.py"]
+    grade["Grade Stage\nharness/grade.py"]
+    judge["Judge Stage\nharness/judge.py"]
+    report["Report Stage\nharness/report.py"]
+    patch["Patch Stage\nharness/patch.py"]
+    found-bugs["found_bugs.jsonl\nshared dedup context"]:::store
+    results["results/ on disk"]:::store
+
+    build -->|"produces ASAN binary"| recon
+    recon -->|"focus_areas partition"| find
+    find -->|"CrashArtifact (3/3 crash)"| grade
+    grade -->|"GraderVerdict (5 criteria)"| judge
+    judge -->|"NEW/DUP_BETTER → bug_id"| report
+    report -->|"ReportVerdict"| results
+    patch -->|"PatchVerdict T0-T3"| results
+    find -->|"appends excerpt"| found-bugs
+    found-bugs -->|"dup_check context"| find
+    grade -->|"result.json"| results

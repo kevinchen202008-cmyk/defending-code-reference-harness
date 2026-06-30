@@ -1,0 +1,1 @@
+两层隔离：(1) 进程隔离——每个阶段在独立 Docker 容器中运行，工件字节仅通过宿主机中转；(2) 内核隔离——gVisor（runsc）在用户空间拦截并验证所有系统调用。网络模型：容器加入 vp-internal（--internal，无直接公网访问），egress_proxy.py 白名单代理仅转发 api.anthropic.com:443。入口通过 bin/vp-sandboxed，该脚本在执行管道前验证沙箱环境。

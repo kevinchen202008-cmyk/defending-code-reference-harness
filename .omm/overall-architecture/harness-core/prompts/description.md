@@ -1,0 +1,1 @@
+harness/prompts/——每个代理角色对应一个文件：system_prompt.py（PIPELINE_PREAMBLE + ENGAGEMENT_CONTEXT，可通过 --engagement-context 覆盖）、find_prompt.py（HIGH/LOW 质量层级、范围外定义、XML 输出格式）、grade_prompt.py（5 项标准清单）、recon_prompt.py（焦点区域分区指导）、report_prompt.py（6 部分可利用性框架）、report_grader_prompt.py（每节 0-2 分评分量表）、patch_prompt.py（T0-T3 反馈注入）、judge_prompt.py（manifest 格式、NEW/DUP_BETTER/DUP_SKIP 判断逻辑）。

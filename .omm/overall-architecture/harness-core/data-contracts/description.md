@@ -1,0 +1,1 @@
+harness/artifacts.py。阶段间传递的不可变数据类：CrashArtifact（poc_bytes base64、crash_output、crash_type、dup_check）、GraderVerdict（passed、score 0-1、5 项标准）、RunResult（target、status、crash、verdict、转录本路径）、ReportVerdict（rubric_score、severity_rating）、PatchVerdict（t0-t3 布尔值）、JudgeVerdict（judgment 枚举、bug_id）。Grade 完成后立即序列化到 result.json 落盘，无缓冲。

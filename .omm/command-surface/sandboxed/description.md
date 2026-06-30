@@ -1,0 +1,1 @@
+bin/vp-sandboxed——Bash 包装脚本，在 exec 执行 vuln-pipeline 前验证 gVisor 沙箱环境。设置环境变量：VULN_PIPELINE_AGENT_RUNTIME=runsc、VULN_PIPELINE_EGRESS_PROXY、VULN_PIPELINE_AGENT_NETWORK=vp-internal。涉及代理启动的子命令（run、report、patch、recon）在此包装器外拒绝运行，除非传入 --dangerously-no-sandbox。

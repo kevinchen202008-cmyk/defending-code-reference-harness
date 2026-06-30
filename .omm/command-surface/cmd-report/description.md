@@ -1,0 +1,1 @@
+`vuln-pipeline report <results_dir>` ——针对已完成的 results 目录（未使用 --stream 产生的，或用于恢复）进行批量报告生成。每个唯一崩溃签名运行一个 report 代理。--novelty 标志启用宿主机侧 git log 查询以注入 FIXED/UNFIXED 状态。--fresh 忽略现有 bug_NN/report.json 检查点并重新生成所有报告。

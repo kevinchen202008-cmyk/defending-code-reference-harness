@@ -1,0 +1,1 @@
+由 harness/config.py 加载为 TargetConfig 数据类。运行时消费的关键字段：focus_areas（Find 代理的攻击面分区）、known_bugs（ASAN 摘录，作为 found_bugs.jsonl 的初始种子，引导 Find 代理避免重新发现已知漏洞）、build_command（Patch T0 必需）、test_command（Patch T2 必需）、binary_path 和 source_root（注入代理提示）。

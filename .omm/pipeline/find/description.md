@@ -1,0 +1,1 @@
+harness/find.py。核心模糊测试代理（最多 2000 轮）。读取源码、构造畸形输入、运行 ASAN 二进制，当崩溃 3/3 次可重现时提交。质量门控：HIGH（堆溢出 WRITE、UAF、非零地址 SEGV）→ 提交；LOW（断言失败、栈溢出、0x0 地址 SEGV）→ 继续搜索。必须输出 <poc_path>、<crash_type>、<dup_check> XML 标签。PoC 字节通过 docker cp 提取并存入 CrashArtifact。

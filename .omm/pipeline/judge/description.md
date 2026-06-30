@@ -1,0 +1,1 @@
+harness/judge.py。无工具 LLM 代理（纯推理，无 Read/Write/Bash）。读取新崩溃的 ASAN 摘录，与 reports/manifest.jsonl 中的内容进行语义比较，返回：NEW（分配 bug_NN）、DUP_BETTER（相同根因但本次 PoC 更干净——触发 compare 代理）、DUP_SKIP（重复，丢弃）。在互斥锁下串行运行，防止并行 find 完成时对同一漏洞争相声明 NEW。

@@ -1,0 +1,1 @@
+harness/patch.py + patch_grade.py。Patch 代理生成修复方案（最多 5 次迭代），每个候选方案经过四层验证梯队：T0 应用并构建（build_command 必须成功）、T1 原始 PoC 不再崩溃、T2 测试套件通过（test_command）、Re-attack（50 轮 find 代理攻击已打补丁的二进制）。失败证据会反馈给 Patch 代理进行下一轮迭代。可选 T3 风格评审（LLM 对 diff 评分 0-10，仅供参考）。输出：reports/bug_NN/ 下的 patch.diff 与 patch_result.json。

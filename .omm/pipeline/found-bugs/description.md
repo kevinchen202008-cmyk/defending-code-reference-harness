@@ -1,0 +1,1 @@
+results/<ts>/found_bugs.jsonl——批次内所有并行 Find 代理共享的去重上下文日志。每行是一个 JSON 对象，包含 asan_excerpt（SUMMARY 行 + 顶部帧）。运行开始时以 config.yaml 中的 known_bugs 作为初始种子。Find 代理提交前读取此文件并生成 <dup_check> 推理标签。每次 grade 通过后追加新条目，多个并行 find 代理的追加操作串行化执行。

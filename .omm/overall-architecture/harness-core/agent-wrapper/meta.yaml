@@ -1,0 +1,9 @@
+created: 2026-06-16T14:44:54.323Z
+updated: 2026-06-16T16:32:14.193Z
+update_count: 2
+last_field: description
+kind: nested-class
+title: agent-wrapper
+children: []
+parentPath:
+  - harness-core

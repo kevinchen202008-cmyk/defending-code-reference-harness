@@ -1,0 +1,1 @@
+运行在每个代理容器内的 `claude` CLI（Claude Code）。调用方式：`claude -p --output-format stream-json --max-turns N --tools Read,Write,Bash`。环境变量 CLAUDECODE=1 抑制嵌套会话检查；IS_SANDBOX=1 启用 --permission-mode bypassPermissions。向 stdout 流式输出 JSONL；每行由宿主机上的 agent.py 解析。CLI 自行管理会话持久化并处理 API 错误的重试逻辑。

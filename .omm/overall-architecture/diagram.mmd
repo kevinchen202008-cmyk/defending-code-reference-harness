@@ -1,0 +1,21 @@
+graph LR
+    classDef entry fill:#89b4fa,stroke:#89b4fa,color:#1e1e2e
+    classDef store fill:#a6e3a1,stroke:#a6e3a1,color:#1e1e2e
+    classDef external fill:#585b70,stroke:#585b70,color:#cdd6f4
+
+    cli["CLI Entrypoint\nharness/cli.py"]:::entry
+    skills["Interactive Skills\n.claude/skills/"]:::entry
+    harness-core["Pipeline Core\nharness/"]
+    targets["Target Definitions\ntargets/"]:::store
+    sandbox["Sandbox Layer\nharness/sandbox.py + scripts/"]
+    results["Results on Disk\nresults/<target>/<ts>/"]:::store
+    claude-api["Claude API\napi.anthropic.com"]:::external
+    docker["Docker + gVisor\nruntime"]:::external
+
+    cli -->|"orchestrates stages"| harness-core
+    skills -->|"read/write files"| harness-core
+    harness-core -->|"reads config"| targets
+    harness-core -->|"launches agents"| sandbox
+    sandbox -->|"docker exec claude -p"| claude-api
+    harness-core -->|"writes artifacts"| results
+    sandbox -->|"container isolation"| docker

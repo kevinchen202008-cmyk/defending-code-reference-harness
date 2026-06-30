@@ -1,0 +1,1 @@
+scripts/egress_proxy.py——运行在 vp-internal 网络上一个专用容器中的 Python HTTP CONNECT 代理。实现白名单：指向 api.anthropic.com:443 的 CONNECT 请求被转发，其余请求以 403 拒绝。代理容器本身的出站网络无限制（宿主机网络或公网）；代理容器只能通过它访问互联网。由 scripts/setup_sandbox.sh 初始化。

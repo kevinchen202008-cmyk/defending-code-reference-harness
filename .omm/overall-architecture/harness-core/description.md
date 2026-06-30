@@ -1,0 +1,1 @@
+Python 包（harness/），包含所有管道阶段模块：find、grade、judge、recon、report、patch、patch_grade、dedup。还包括代理包装器（agent.py）、数据契约（artifacts.py）、ASAN 解析器（asan.py）、配置加载器（config.py）、Docker 操作（docker_ops.py）以及提示模板（prompts/）。稳定的编排骨架——阶段逻辑和提示模板是主要扩展点。

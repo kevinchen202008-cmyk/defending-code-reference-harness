@@ -1,0 +1,19 @@
+created: 2026-06-16T14:53:05.349Z
+updated: 2026-06-16T16:37:47.034Z
+update_count: 5
+last_field: concern
+git_commit: 96dea02
+git_branch: main
+children:
+  - asan-binary
+  - config-yaml
+  - crash-output
+  - found-bugs
+  - grader-verdict
+  - manifest
+  - patch-diff
+  - patch-result
+  - poc-bytes
+  - report-json
+  - result-json
+  - source

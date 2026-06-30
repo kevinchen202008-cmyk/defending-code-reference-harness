@@ -1,0 +1,9 @@
+created: 2026-06-16T14:45:54.841Z
+updated: 2026-06-16T16:32:39.217Z
+update_count: 2
+last_field: description
+kind: nested-class
+title: prompts
+children: []
+parentPath:
+  - harness-core

@@ -1,0 +1,19 @@
+graph LR
+    classDef external fill:#585b70,stroke:#585b70,color:#cdd6f4
+    classDef entry fill:#89b4fa,stroke:#89b4fa,color:#1e1e2e
+    classDef store fill:#a6e3a1,stroke:#a6e3a1,color:#1e1e2e
+
+    harness["Pipeline Harness\nharness/"]:::entry
+
+    claude-api["Claude API\napi.anthropic.com:443"]:::external
+    docker-runtime["Docker Engine\n+ gVisor (runsc)"]:::external
+    github-upstream["GitHub Upstream\n(novelty check only)"]:::external
+
+    egress-proxy["Egress Proxy\nscripts/egress_proxy.py"]
+    claude-cli["claude CLI\ninside each container"]:::entry
+
+    harness -->|"docker build / run / cp / exec / rm"| docker-runtime
+    harness -->|"spawns"| claude-cli
+    claude-cli -->|"HTTP/2 via proxy"| egress-proxy
+    egress-proxy -->|"allowlist: only this host"| claude-api
+    harness -->|"git log (host-side, --novelty only)"| github-upstream

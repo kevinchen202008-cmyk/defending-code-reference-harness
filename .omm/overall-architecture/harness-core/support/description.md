@@ -1,0 +1,1 @@
+支持工具集：asan.py（解析 ASAN 输出 → crash_type、top_frame、asan_excerpt，用于去重签名）、config.py（将 targets/*/config.yaml 加载为 TargetConfig 数据类）、docker_ops.py（对 docker CLI 的薄封装：build/run/read_file/write_file/exec_sh/rm）、dedup.py（后处理：按 (crash_type, top_frame) 聚类）、novelty.py（可选：在宿主机侧执行 git log 查询上游修复状态）。

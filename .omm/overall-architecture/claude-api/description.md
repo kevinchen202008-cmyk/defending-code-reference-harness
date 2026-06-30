@@ -1,0 +1,1 @@
+Anthropic Claude API（api.anthropic.com）。通过在每个容器内运行的 `claude -p --output-format stream-json` 访问。支持 API 密钥（ANTHROPIC_API_KEY）和 OAuth token（CLAUDE_CODE_OAUTH_TOKEN）两种认证方式。限流/5xx 错误先由 claude CLI 内部重试；若 CLI 放弃，管道进行指数退避（上限 300 秒）并用 --resume <session_id> 恢复会话，完整对话上下文得以保留。

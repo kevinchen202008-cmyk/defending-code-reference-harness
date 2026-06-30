@@ -1,0 +1,1 @@
+harness/agent.py。核心异步循环：封装 `docker exec -i <容器名> claude -p --output-format stream-json`。流式处理 JSONL 消息，每条消息 fsync 到转录文件，每 25 条助理消息打印一次心跳进度。子进程崩溃时等待 3 秒后使用 `--resume <session_id>` 恢复，最多重试 20 次。提供 find_tagged_message() 用于从消息历史中提取 XML 标签。

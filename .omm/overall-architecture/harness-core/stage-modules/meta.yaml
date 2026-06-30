@@ -1,0 +1,9 @@
+created: 2026-06-16T14:45:14.109Z
+updated: 2026-06-16T16:32:22.374Z
+update_count: 2
+last_field: description
+kind: nested-class
+title: stage-modules
+children: []
+parentPath:
+  - harness-core

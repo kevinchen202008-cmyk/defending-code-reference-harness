@@ -1,0 +1,1 @@
+`vuln-pipeline patch <results_dir>` ——为每个唯一崩溃生成并验证修复方案。--bug N 限定为单个 bug_id。--no-reattack 跳过 50 轮 re-attack 层（迭代更快）。--max-iterations N（默认 5）控制每个漏洞的补丁/反馈循环次数。--style 启用可选的 T3 LLM 风格评审。需要 config.yaml 中配置 build_command。

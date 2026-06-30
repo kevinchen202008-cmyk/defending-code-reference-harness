@@ -1,0 +1,1 @@
+位于 .claude/skills/ 的六个交互式 Claude Code 技能：/quickstart（引导入门）、/threat-model（生成 THREAT_MODEL.md）、/vuln-scan（静态扫描 → VULN-FINDINGS.json）、/triage（验证+排序 → TRIAGE.json）、/patch（候选修复 → PATCHES/）、/customize（移植管道到新技术栈）。通过 _lib/checkpoint.py 共享检查点序列化。所有技能均为纯读写，不需要代码执行。

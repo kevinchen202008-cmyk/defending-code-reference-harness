@@ -1,0 +1,1 @@
+reports/bug_NN/report.json——单个唯一漏洞的 ReportVerdict。包含：6 部分可利用性分析（原语、可达性、堆布局、提权路径、约束条件、严重程度评级）、Report Grader 的 rubric_score（0-10）、novelty_status（使用 --novelty 时为 FIXED/UNFIXED/UNKNOWN）以及完整报告文本。由 report.py 写入；patch.py 读取以初始化 Patch 代理上下文。

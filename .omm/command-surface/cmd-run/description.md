@@ -1,0 +1,1 @@
+`vuln-pipeline run <目标>` ——主管道命令。关键标志：--runs N（并行 find 代理数量）、--parallel（asyncio.gather）、--stream（每次 grade 完成后立即串联 judge→report）、--auto-focus（先执行 recon）、--resume <results_dir>（恢复被中断的批次）、--find-only（跳过 grade）、--accept-dos（降低 DoS 类 CVE 的质量门控）、--engagement-context <文件>（覆盖授权块）、--max-turns N。需通过 bin/vp-sandboxed 包装器执行以启用完整沙箱。

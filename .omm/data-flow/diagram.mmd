@@ -1,0 +1,29 @@
+graph LR
+    classDef store fill:#a6e3a1,stroke:#a6e3a1,color:#1e1e2e
+    classDef concern fill:#f38ba8,stroke:#f38ba8,color:#1e1e2e
+
+    source["Target Source\ntargets/<name>/"]:::store
+    config-yaml["config.yaml\nTargetConfig"]:::store
+    asan-binary["ASAN Binary\ninside Docker image"]
+    poc-bytes["PoC Bytes\nCrashArtifact.poc_bytes (base64)"]:::concern
+    crash-output["Crash Output\nASAN stderr text"]
+    found-bugs["found_bugs.jsonl\nASAN excerpts + dup_check"]:::store
+    grader-verdict["GraderVerdict\npassed + score + 5 criteria"]
+    result-json["result.json\nRunResult on disk"]:::store
+    manifest["manifest.jsonl\nbug_id → asan_excerpt"]:::store
+    report-json["report.json\nReportVerdict (6 sections)"]:::store
+    patch-diff["patch.diff\ngit diff bytes"]:::store
+    patch-result["patch_result.json\nPatchVerdict T0-T3"]:::store
+
+    source -->|"docker build"| asan-binary
+    config-yaml -->|"focus_areas, known_bugs"| asan-binary
+    asan-binary -->|"Find agent runs binary"| crash-output
+    crash-output -->|"Find agent extracts"| poc-bytes
+    poc-bytes -->|"docker cp via host"| grader-verdict
+    crash-output -->|"asan_excerpt appended"| found-bugs
+    found-bugs -->|"dup_check context"| poc-bytes
+    grader-verdict -->|"serialized"| result-json
+    result-json -->|"Judge reads"| manifest
+    manifest -->|"Report agent input"| report-json
+    report-json -->|"Patch agent input"| patch-diff
+    patch-diff -->|"T0-T3 ladder"| patch-result

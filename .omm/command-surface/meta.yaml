@@ -1,0 +1,21 @@
+created: 2026-06-16T14:50:40.497Z
+updated: 2026-06-16T16:35:26.450Z
+update_count: 3
+last_field: description
+git_commit: 96dea02
+git_branch: main
+children:
+  - cmd-dedup
+  - cmd-patch
+  - cmd-recon
+  - cmd-report
+  - cmd-run
+  - sandboxed
+  - skill-customize
+  - skill-patch
+  - skill-quickstart
+  - skill-threat
+  - skill-triage
+  - skill-vuln
+  - skills-entry
+  - vuln-pipeline

@@ -1,0 +1,1 @@
+带 gVisor（runsc）运行时的 Docker Engine。管道通过 docker_ops.py 封装所有 Docker CLI 操作：build（每个目标构建一次镜像）、run（每阶段容器，带 --runtime=runsc --network=vp-internal）、cp（宿主机与容器间工件传输）、exec（在容器内执行命令）、rm（清理）。每个容器均为临时的——在阶段开始时创建，完成或收到信号时销毁。

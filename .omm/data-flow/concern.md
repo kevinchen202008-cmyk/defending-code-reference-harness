@@ -1,0 +1,1 @@
+PoC 字节（poc-bytes 节点）以不可信数据的形式经过宿主机。精心构造的 ASAN 输出或 PoC 文件名可能尝试对 Grade 代理的上下文进行提示注入。缓解措施：grade_prompt.py 将不可信数据包裹在 <untrusted_data> 块中（参见 harness/prompts/untrusted.py）。补丁 diff 在合并到上游前需人工审查——管道只在测试套件范围内证明正确性，不能保证生产安全。

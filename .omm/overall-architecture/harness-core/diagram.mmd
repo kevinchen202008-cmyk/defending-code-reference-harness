@@ -1,0 +1,14 @@
+graph LR
+    classDef store fill:#a6e3a1,stroke:#a6e3a1,color:#1e1e2e
+
+    agent-wrapper["Agent Wrapper\nharness/agent.py"]
+    stage-modules["Stage Modules\nharness/{find,grade,judge,recon,report,patch}.py"]
+    data-contracts["Data Contracts\nharness/artifacts.py"]
+    prompts["Prompt Templates\nharness/prompts/"]
+    support["Support Utilities\nharness/{asan,config,docker_ops,dedup,novelty}.py"]
+
+    stage-modules -->|"calls run_agent()"| agent-wrapper
+    stage-modules -->|"produces/consumes"| data-contracts
+    stage-modules -->|"builds prompts via"| prompts
+    agent-wrapper -->|"uses"| support
+    stage-modules -->|"uses"| support

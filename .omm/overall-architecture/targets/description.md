@@ -1,0 +1,1 @@
+targets/——每个可扫描目标对应一个子目录：Dockerfile（ASAN 插桩构建）+ config.yaml（TargetConfig：路径、focus_areas、known_bugs、构建/测试命令）。内置目标：canary（快速冒烟测试，含 3 个故意植入的漏洞）、drlibs（libdr_wav CVE）、alsa（ALSA CVE）、htslib（CRAM 格式，10 个 CVE）。添加新目标只需这两个文件，无需修改管道代码。

@@ -1,0 +1,1 @@
+targets/<名称>/——整个管道的静态输入。包含 Dockerfile（构建指令）、config.yaml（TargetConfig：路径、focus_areas、known_bugs、构建/测试命令），以及 canary 目标的源码（canary/entry.c）。对于真实目标（drlibs、alsa、htslib），源码在 docker build 期间从 Dockerfile 中固定的提交哈希拉取。

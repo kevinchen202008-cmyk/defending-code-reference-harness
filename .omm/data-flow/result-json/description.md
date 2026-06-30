@@ -1,0 +1,1 @@
+run_NNN/result.json——单次 find+grade 周期的完整 RunResult。grade 完成时立即写入（不在批次结束时）。包含：target、status（found/not_found/grade_failed）、完整 CrashArtifact（含 poc_bytes base64）、GraderVerdict 和转录本路径。支持 --resume：管道统计 terminal result.json 文件数来跳过已完成的 run。

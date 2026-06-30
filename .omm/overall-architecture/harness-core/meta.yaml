@@ -1,0 +1,13 @@
+created: 2026-06-16T14:44:06.219Z
+updated: 2026-06-16T16:32:06.416Z
+update_count: 3
+last_field: description
+kind: nested-class
+title: harness-core
+children:
+  - agent-wrapper
+  - data-contracts
+  - prompts
+  - stage-modules
+  - support
+parentPath: []
